@@ -298,8 +298,15 @@ const map = new maplibregl.Map({
 map.addControl(new maplibregl.NavigationControl({visualizePitch: true}), "top-right");
 let SEG, RATING, RAIN, RG, RAINMEAN, PIX, COORDS, RCOORDS;
 
-async function bin(f) { return new Float32Array(await (await fetch(DATA + f)).arrayBuffer()); }
-async function u16(f) { return new Uint16Array(await (await fetch(DATA + f)).arrayBuffer()); }
+// binary files are fetched gzipped and unpacked in the browser (GitHub Pages does not compress them); plain copy otherwise
+async function buf(f) {
+  if (typeof DecompressionStream === "function") {
+    try { const r = await fetch(DATA + f + ".gz"); if (r.ok) return await new Response(r.body.pipeThrough(new DecompressionStream("gzip"))).arrayBuffer(); } catch (e) {}
+  }
+  return await (await fetch(DATA + f)).arrayBuffer();
+}
+async function bin(f) { return new Float32Array(await buf(f)); }
+async function u16(f) { return new Uint16Array(await buf(f)); }
 const step = m => { const l = document.getElementById("loading"); if (l.style.display !== "none") l.textContent = "Loading the storm… " + m; };
 async function load() {
   step("(1/5 model)");
@@ -325,7 +332,7 @@ async function load() {
   const [w0, s0, e0, n0] = M.cells_bounds; COORDS = [[w0, n0], [e0, n0], [e0, s0], [w0, s0]];
   const dl = 0.02; RCOORDS = [[RG.lon[0] - dl, RG.lat[0] + dl], [RG.lon.at(-1) + dl, RG.lat[0] + dl], [RG.lon.at(-1) + dl, RG.lat.at(-1) - dl], [RG.lon[0] - dl, RG.lat.at(-1) - dl]];
   step("(4/5 buildings and roads)");
-  const [fb, rb, pl] = await Promise.all([fetch(DATA + "floodable.bin").then(r => r.arrayBuffer()), fetch(DATA + "roads.bin").then(r => r.arrayBuffer()), fetch(DATA + "places.json").then(r => r.json())]);
+  const [fb, rb, pl] = await Promise.all([buf("floodable.bin"), buf("roads.bin"), fetch(DATA + "places.json").then(r => r.json())]);
   // buildings that can flood: int32 building id, uint16 stretch, uint16 height above the drain (cm), little-endian
   const dv = new DataView(fb), nb = fb.byteLength / 8;
   bGid = new Int32Array(nb); bSeg = new Uint16Array(nb); bHand = new Float32Array(nb);
