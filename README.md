@@ -1,27 +1,20 @@
-# Kampala Flood Replay
+# kampala-flood-replay
 
-**Open it: https://gavacharles.github.io/kampala-flood-replay/**
+Static GitHub Pages site for Kampala Flood Replay, a 3D map that replays the 10–11 October 2026 storm hour by hour from a drainage screening model, with settings the viewer can change. Live at https://gavacharles.github.io/kampala-flood-replay/
 
-The Kampala storm of 10–11 October 2026, replayed hour by hour on a 3D map:
+## Contents
 
-- **Floodwater:** modelled depth on 30 m squares along the city's valley channels.
-- **Buildings with water at the door,** and **roads under water.**
-- **Settings you can change and run again:** rain multiplier, silt in the channels, and paving on the hills (today or as in 1990).
-- **Search** any street or landmark, paste a Google Maps or Apple Maps link, or click the map: a card gives that spot's water hour by hour, how deep in body terms, how long it stayed, the nearest road under water and the nearest channel with its maintenance priority.
-- **Day and night:** the light follows the time of the replay, or stays day or night.
-- **Compare with clean channels:** shows in green the land, buildings and roads that desilted channels would have kept dry in the same storm.
-- **Reports:** each news report of the storm is on the map, with a live check of whether the model agrees.
-- **Embed and data:** see [developers.html](https://gavacharles.github.io/kampala-flood-replay/developers.html).
+| Path | What it is |
+|---|---|
+| `index.html` | The replay application |
+| `developers.html` | Embedding and data notes for developers |
+| `data/` | Model and map data loaded by the page: vector tiles (`buildings.pmtiles`, `channels.pmtiles`), binary grids (`*.bin`, with `.gz` copies), rain grids and series, metadata, places and extras (`*.json`), and a cell raster (`cells.png`) |
+| `.nojekyll` | Serve files as they are on GitHub Pages |
 
-The model is the Kampala drainage screening model, run with hourly satellite rain. It reproduces the flooding reported at Lubigi and Kinawataka in the early hours of 11 October, and misses Banda. The depths are model estimates, not measurements: they show the pattern of the flood, not the depth at any one door.
+There is no build step in this repository. To view locally, serve the folder (`python -m http.server`) and open http://localhost:8000.
 
 ## Sources
 
-- **Rain:** PERSIANN-CCS hourly, CHRS, University of California, Irvine.
-- **Ground heights and channels:** Copernicus DEM GLO-30; channel network and drainage model by this study.
-- **Buildings and heights:** Microsoft Global ML Building Footprints.
-- **Roads, names and base map:** © OpenStreetMap contributors, via OpenFreeMap; search by Photon (Komoot).
-- **3D terrain:** AWS Terrain Tiles. **Satellite base:** Esri World Imagery.
-- **Reports of the storm:** NTV, Daily Monitor, KFM, allAfrica.
+Rain: PERSIANN-CCS hourly (CHRS, University of California, Irvine). Terrain: Copernicus DEM GLO-30; channel network and drainage model from the Kampala drainage study. Buildings: Microsoft Global ML Building Footprints. Roads, names and base map: © OpenStreetMap contributors via OpenFreeMap; search by Photon (Komoot). 3D terrain: AWS Terrain Tiles. Satellite base: Esri World Imagery. Storm reports: NTV, Daily Monitor, KFM, allAfrica.
 
 Analysis and tool: Gava Charles. A screening tool: indicative, not for design or insurance.
